@@ -3,6 +3,7 @@ package club.yunzhi.logindemo.service;
 import club.yunzhi.logindemo.entity.User;
 import club.yunzhi.logindemo.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -42,8 +43,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public boolean authenticateByUP(String[] usernameAndPassword) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(usernameAndPassword[0], usernameAndPassword[1]);
-        Authentication authentication = authenticationManager.authenticate(token);
-        return authentication.isAuthenticated();
+        try {
+            Authentication authentication = authenticationManager.authenticate(token);
+            return authentication.isAuthenticated();
+        } catch (BadCredentialsException e) {
+            return false;
+        }
     }
 
     @Override
